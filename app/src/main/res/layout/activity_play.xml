@@ -6,4 +6,139 @@
     android:layout_height="match_parent"
     tools:context=".PlayActivity">
 
+    <Button
+        android:id="@+id/nextRound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:onClick="nextRound"
+        android:text="@string/nextRound"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <Button
+        android:id="@+id/endGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:onClick="endGame"
+        android:text="@string/endGame"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nextRound" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/redPlus"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:onClick="incrementRed"
+            android:text="+1"
+            app:layout_constraintEnd_toStartOf="@+id/redMinus"
+            app:layout_constraintHorizontal_bias="0.391"
+            app:layout_constraintStart_toStartOf="@+id/redMatchScore"
+            app:layout_constraintTop_toBottomOf="@+id/redMatchScore" />
+
+        <Button
+            android:id="@+id/bluePlus"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:onClick="incrementBlue"
+            android:text="+1"
+            app:layout_constraintEnd_toStartOf="@+id/blueMinus"
+            app:layout_constraintStart_toStartOf="@+id/blueMatchScore"
+            app:layout_constraintTop_toBottomOf="@+id/blueMatchScore" />
+
+        <Button
+            android:id="@+id/blueMinus"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:onClick="decrementBlue"
+            android:text="-1"
+            app:layout_constraintEnd_toEndOf="@+id/blueMatchScore"
+            app:layout_constraintStart_toEndOf="@+id/bluePlus"
+            app:layout_constraintTop_toBottomOf="@+id/blueMatchScore" />
+
+        <Button
+            android:id="@+id/redMinus"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:onClick="decrementRed"
+            android:text="-1"
+            app:layout_constraintEnd_toEndOf="@+id/redMatchScore"
+            app:layout_constraintStart_toEndOf="@+id/redPlus"
+            app:layout_constraintTop_toBottomOf="@+id/redMatchScore" />
+
+        <TextView
+            android:id="@+id/blueMatchScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="00"
+            android:textColor="@color/colorPrimary"
+            android:textSize="72sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/blueRoundScore" />
+
+        <TextView
+            android:id="@+id/dash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="8dp"
+            android:text="-"
+            android:textAlignment="center"
+            android:textSize="72sp"
+            app:layout_constraintEnd_toStartOf="@+id/blueMatchScore"
+            app:layout_constraintHorizontal_bias="0.516"
+            app:layout_constraintStart_toEndOf="@+id/redMatchScore"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/redMatchScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="00"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="72sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/blueRoundScore" />
+
+        <TextView
+            android:id="@+id/blueRoundScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/blueMatchScore"
+            app:layout_constraintEnd_toEndOf="@+id/blueMatchScore"
+            app:layout_constraintStart_toStartOf="@+id/blueMatchScore"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/redRoundScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/redMatchScore"
+            app:layout_constraintEnd_toEndOf="@+id/redMatchScore"
+            app:layout_constraintStart_toStartOf="@+id/redMatchScore"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
 </android.support.constraint.ConstraintLayout>

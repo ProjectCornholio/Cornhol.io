@@ -1,6 +1,7 @@
 package design.cornholio;
 
 import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -12,7 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.os.ParcelUuid;
+
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -30,8 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 public class PairActivity extends AppCompatActivity {
@@ -42,8 +41,6 @@ public class PairActivity extends AppCompatActivity {
     private ArrayList<String> pairedDevices = new ArrayList<>();
     private ArrayList<String> discoveredDevices = new ArrayList<>();
 
-    private BluetoothSocket btSocket = null;
-
     private ListView pairedView;
     private ListView discoveredView;
 
@@ -51,25 +48,28 @@ public class PairActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent
-                        .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                discoveredDevices.add(device.getName() + "\n" + device.getAddress());
-                discoveredView.setAdapter(new ArrayAdapter<>(context,
-                        android.R.layout.simple_list_item_1, discoveredDevices));
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (device.getName() != null && device.getName().contains("Cornhol.io")) {
+                    discoveredDevices.add(device.getName() + "\n" + device.getAddress());
+                    discoveredView.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, discoveredDevices));
+                }
             }
-            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                Toast.makeText(getApplicationContext(), "ass", Toast.LENGTH_SHORT).show();
+            if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                Toast.makeText(getApplicationContext(), "Search complete", Toast.LENGTH_SHORT).show();
             }
         }
     };
 
     private AdapterView.OnItemClickListener deviceClickedListener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
-            String targetAddress = parent
-                    .getItemAtPosition(position).toString().split("\n")[1];
-            BluetoothDevice targetDevice = btAdapter.getRemoteDevice(targetAddress);
-            ConnectThread thread = new ConnectThread(targetDevice);
-            thread.start();
+            String targetName = parent.getItemAtPosition(position).toString().split("\n")[0];
+            String targetAddress = parent.getItemAtPosition(position).toString().split("\n")[1];
+
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("name", targetName);
+            returnIntent.putExtra("address", targetAddress);
+            setResult(Activity.RESULT_OK,returnIntent);
+            finish();
         }
     };
 
@@ -86,63 +86,66 @@ public class PairActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(receiver, filter);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION, getString(R.string.locPermMsg));
+        }
+        else {
+            View searchButton = findViewById(R.id.searchButton);
+            searchButton.setEnabled(true);
+            getPairedDevices();
+        }
     }
 
     @Override
     protected void onDestroy() {
         unregisterReceiver(receiver);
+        btAdapter.cancelDiscovery();
         super.onDestroy();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
-        if (requestCode == 0 && grantResults.length > 0 &&
-                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            searchForDevices(null);
-        }
-        else {
-            Toast.makeText(getApplicationContext(), getString(R.string.locDeniedMsg),
-                    Toast.LENGTH_SHORT).show();
+        if (requestCode == 0 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            View searchButton = findViewById(R.id.searchButton);
+            searchButton.setEnabled(true);
+            getPairedDevices();
+        } else {
+            Toast.makeText(getApplicationContext(), "Cannot search for devices without location permission", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void searchForDevices(View v) {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION,
-                    getString(R.string.locPermMsg));
-        } else {
-            if (btAdapter == null) {
-                Toast.makeText(getApplicationContext(), getString(R.string.btDisabledMsg),
-                        Toast.LENGTH_LONG).show();
-            }
-            else {
-                if (!btAdapter.isEnabled()){
-                    btAdapter.enable();
-                }
-                pairedDevices.clear();
-                for (BluetoothDevice device : btAdapter.getBondedDevices()) {
-                    pairedDevices.add(device.getName() + "\n" + device.getAddress());
-                }
-                pairedView.setAdapter(new ArrayAdapter<>(this,
-                        android.R.layout.simple_list_item_1, pairedDevices));
-
-                discoveredDevices.clear();
-                if (btAdapter.isDiscovering()) {
-                    btAdapter.cancelDiscovery();
-                }
-                btAdapter.startDiscovery();
+    public void getPairedDevices() {
+        pairedDevices.clear();
+        for (BluetoothDevice device : btAdapter.getBondedDevices()) {
+            if (device.getName() != null && device.getName().contains("Cornhol.io")) {
+                pairedDevices.add(device.getName() + "\n" + device.getAddress());
             }
         }
+        pairedView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, pairedDevices));
+    }
+
+    public void searchForDevices(View v) {
+        discoveredDevices.clear();
+        if (btAdapter.isDiscovering()) {
+            btAdapter.cancelDiscovery();
+        }
+        btAdapter.startDiscovery();
+        Toast.makeText(getApplicationContext(), "Searching...", Toast.LENGTH_SHORT).show();
+    }
+
+    public void clearDevice(View v) {
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_CANCELED, returnIntent);
+        finish();
     }
 
     protected void requestPermission(String permission, String rationaleMsg) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
             getPermissionRationaleDialog(permission, rationaleMsg).show();
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{permission}, 0);
+            ActivityCompat.requestPermissions(this, new String[]{permission}, 0);
         }
     }
 
@@ -153,8 +156,7 @@ public class PairActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ActivityCompat.requestPermissions(PairActivity.this,
-                        new String[]{perm}, 0);
+                ActivityCompat.requestPermissions(PairActivity.this, new String[]{perm}, 0);
                 dialog.dismiss();
             }
         });
@@ -165,139 +167,5 @@ public class PairActivity extends AppCompatActivity {
             }
         });
         return builder.create();
-    }
-
-    private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final BluetoothDevice mmDevice;
-
-        public ConnectThread(BluetoothDevice device) {
-            mmDevice = device;
-            BluetoothSocket tmp = null;
-
-            // Get a BluetoothSocket for a connection with the
-            // given BluetoothDevice
-            try {
-                tmp = device.createRfcommSocketToServiceRecord(serialUUID);
-            } catch (IOException e) {
-                Log.e(TAG, "Socket create() failed", e);
-            }
-            mmSocket = tmp;
-        }
-
-        public void run() {
-            Log.i(TAG, "BEGIN mConnectThread");
-            setName("ConnectThread");
-
-            // Always cancel discovery because it will slow down a connection
-            btAdapter.cancelDiscovery();
-
-            // Make a connection to the BluetoothSocket
-            try {
-                // This is a blocking call and will only return on a
-                // successful connection or an exception
-                mmSocket.connect();
-            } catch (IOException e) {
-                // Close the socket
-                try {
-                    mmSocket.close();
-                } catch (IOException e2) {
-                    Log.e(TAG, "unable to close() " +
-                            " socket during connection failure", e2);
-                }
-                Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Start the connected thread
-            ConnectedThread thread = new ConnectedThread(mmSocket);
-            thread.start();
-        }
-
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                Log.e(TAG, "close() of connect socket failed", e);
-            }
-        }
-    }
-
-    /**
-     * This thread runs during a connection with a remote device.
-     * It handles all incoming and outgoing transmissions.
-     */
-    private class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
-
-        public ConnectedThread(BluetoothSocket socket) {
-            Log.d(TAG, "create ConnectedThread");
-            mmSocket = socket;
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-
-            // Get the BluetoothSocket input and output streams
-            try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
-            } catch (IOException e) {
-                Log.e(TAG, "temp sockets not created", e);
-            }
-
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
-
-        public void run() {
-            Log.i(TAG, "BEGIN mConnectedThread");
-            byte[] buffer = new byte[1024];
-            int bytes;
-            long time = System.currentTimeMillis();
-
-            // Keep listening to the InputStream while connected
-            while (true) {
-                try {
-                    // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
-                    if (System.currentTimeMillis() - time >= 1000) {
-                        final byte[] printBuf = buffer;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplicationContext(), new String(printBuf), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        time = System.currentTimeMillis();
-                    }
-                } catch (IOException e) {
-                    Log.e(TAG, "disconnected", e);
-                    Toast.makeText(getApplicationContext(), "disconnect", Toast.LENGTH_SHORT).show();
-                    break;
-                }
-            }
-        }
-
-        /**
-         * Write to the connected OutStream.
-         *
-         * @param buffer The bytes to write
-         */
-        public void write(byte[] buffer) {
-            try {
-                mmOutStream.write(buffer);
-            } catch (IOException e) {
-                Log.e(TAG, "Exception during write", e);
-            }
-        }
-
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                Log.e(TAG, "close() of connect socket failed", e);
-            }
-        }
     }
 }

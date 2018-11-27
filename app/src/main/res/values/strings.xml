@@ -88,4 +88,10 @@
     <string name="btDisabledMsg">Bluetooth is disabled on this device</string>
     <string name="locPermMsg">This app needs your location to pair with boards over Bluetooth. An alternative is to pair using the Android Bluetooth menu in your settings.</string>
     <string name="locDeniedMsg">Permission denied to use your location</string>
+    <string name="board_1">Board 1</string>
+    <string name="board_2">Board 2 (optional)</string>
+    <string name="none">None</string>
+    <string name="clear">Clear</string>
+    <string name="nextRound">Next Round</string>
+    <string name="endGame">End Game</string>
 </resources>
