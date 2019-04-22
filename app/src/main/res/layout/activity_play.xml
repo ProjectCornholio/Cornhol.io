@@ -33,12 +33,32 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="214dp"
         android:layout_marginTop="64dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/blueBustWarning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="@+id/blueRoundScore"
+            app:layout_constraintStart_toStartOf="@+id/blueRoundScore"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/redBustWarning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/holo_red_dark"
+            app:layout_constraintEnd_toEndOf="@+id/redRoundScore"
+            app:layout_constraintStart_toStartOf="@+id/redRoundScore"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/redPlus"
@@ -97,7 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="64dp"
             android:layout_marginEnd="8dp"
             android:text="-"
             android:textAlignment="center"
@@ -122,6 +142,8 @@
             android:id="@+id/blueRoundScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="+0"
             android:textAlignment="center"
             android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@+id/blueMatchScore"
@@ -133,6 +155,8 @@
             android:id="@+id/redRoundScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="+0"
             android:textAlignment="center"
             android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@+id/redMatchScore"
@@ -140,5 +164,26 @@
             app:layout_constraintStart_toStartOf="@+id/redMatchScore"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/randomize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:onClick="randomize"
+        android:text="Randomize"
+        app:layout_constraintEnd_toEndOf="@+id/nextRound"
+        app:layout_constraintStart_toStartOf="@+id/nextRound"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <TextView
+        android:id="@+id/bustScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/bustScore"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

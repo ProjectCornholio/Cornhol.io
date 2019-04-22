@@ -10,7 +10,7 @@
 
     <!-- Strings related to Settings -->
 
-    <!-- Example General settings -->
+    <!-- Example General preferences -->
     <string name="pref_header_general">General</string>
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
@@ -33,7 +33,7 @@
         <item>-1</item>
     </string-array>
 
-    <!-- Example settings for Data & Sync -->
+    <!-- Example preferences for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
@@ -70,7 +70,7 @@
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
-    <!-- Example settings for Notifications -->
+    <!-- Example preferences for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
 
     <string name="pref_title_new_message_notifications">New message notifications</string>
@@ -88,10 +88,14 @@
     <string name="btDisabledMsg">Bluetooth is disabled on this device</string>
     <string name="locPermMsg">This app needs your location to pair with boards over Bluetooth. An alternative is to pair using the Android Bluetooth menu in your settings.</string>
     <string name="locDeniedMsg">Permission denied to use your location</string>
-    <string name="board_1">Board 1</string>
-    <string name="board_2">Board 2 (optional)</string>
+    <string name="board">Board</string>
     <string name="none">None</string>
     <string name="clear">Clear</string>
     <string name="nextRound">Next Round</string>
     <string name="endGame">End Game</string>
+    <string name="busting_summary">Penalizes player for going over the score limit</string>
+    <string name="busting">Busting</string>
+    <string name="scoreLimit">Score Limit</string>
+    <string name="bustWarning">Bust Warning!</string>
+    <string name="bustScore">Bust Penalty: X</string>
 </resources>

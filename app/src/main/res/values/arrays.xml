@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="score_limit_entries">
+        <item>Short (11)</item>
+        <item>Medium (15)</item>
+        <item>Long (21)</item>
+    </string-array>
+    <string-array name="score_limit_values">
+        <item>11</item>
+        <item>15</item>
+        <item>21</item>
+    </string-array>
+</resources>
