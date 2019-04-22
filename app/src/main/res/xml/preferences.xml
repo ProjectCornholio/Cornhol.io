@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="busting_preference"
+        android:summary="@string/busting_summary"
+        android:title="@string/busting" />
+    <ListPreference
+        android:defaultValue="21"
+        android:entries="@array/score_limit_entries"
+        android:entryValues="@array/score_limit_values"
+        android:key="score_limit_preference"
+        android:title="@string/scoreLimit" />
+</PreferenceScreen>
